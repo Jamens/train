@@ -1,6 +1,8 @@
 package com.junhao.member.service;
 
 import cn.hutool.core.collection.CollUtil;
+import com.junhao.common.exception.BusinessException;
+import com.junhao.common.exception.BusinessExceptionEnum;
 import com.junhao.member.domain.Member;
 import com.junhao.member.domain.MemberExample;
 import com.junhao.member.mapper.MemberMapper;
@@ -24,7 +26,7 @@ public class MemberService {
         memberExample.createCriteria().andMobileEqualTo(mobile);
         List<Member> members = memberMapper.selectByExample(memberExample);
         if (CollUtil.isNotEmpty(members)) {
-            throw new RuntimeException("手机号已注册");
+            throw new BusinessException(BusinessExceptionEnum.MEMBER_MOBILE_EXIST);
 //            return members.get(0).getId();
         }
         Member member = new Member();

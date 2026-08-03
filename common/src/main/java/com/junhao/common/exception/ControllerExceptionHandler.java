@@ -1,4 +1,5 @@
-package com.junhao.common.controller;
+package com.junhao.common.exception;
+
 
 import com.junhao.common.resp.CommonResp;
 import org.slf4j.Logger;
@@ -18,12 +19,26 @@ public class ControllerExceptionHandler {
      */
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
-    public CommonResp exceptionHandler(Exception e) throws Exception {
+    public CommonResp exceptionHandler(Exception e) {
         CommonResp commonResp = new CommonResp();
         LOG.error("系统异常：", e);
         commonResp.setSuccess(false);
-        // commonResp.setMessage("系统出现异常，请联系管理员");
-        commonResp.setMessage(e.getMessage());
+        commonResp.setMessage("系统出现异常，请联系管理员");
+        return commonResp;
+    }
+
+    /**
+     * 业务异常统一处理
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(value = BusinessException.class)
+    @ResponseBody
+    public CommonResp exceptionHandler(BusinessException e) {
+        CommonResp commonResp = new CommonResp();
+        LOG.error("业务异常：", e);
+        commonResp.setSuccess(false);
+        commonResp.setMessage(e.getBusinessExceptionEnum().getDesc());
         return commonResp;
     }
 }
