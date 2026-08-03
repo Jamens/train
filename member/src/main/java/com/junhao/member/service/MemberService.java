@@ -1,8 +1,10 @@
 package com.junhao.member.service;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.IdUtil;
 import com.junhao.common.exception.BusinessException;
 import com.junhao.common.exception.BusinessExceptionEnum;
+import com.junhao.common.util.SnowUtil;
 import com.junhao.member.domain.Member;
 import com.junhao.member.domain.MemberExample;
 import com.junhao.member.mapper.MemberMapper;
@@ -30,7 +32,7 @@ public class MemberService {
 //            return members.get(0).getId();
         }
         Member member = new Member();
-        member.setId(System.currentTimeMillis());
+        member.setId(SnowUtil.getSnowflakeId());
         member.setMobile(mobile);
         memberMapper.insert(member);
         return member.getId();
