@@ -78,7 +78,7 @@ public class LogAspect {
         }
         // 排除字段，敏感字段或太长的字段不显示：身份证、手机号、邮箱、密码等
         SimplePropertyPreFilter excludeFilter = new SimplePropertyPreFilter();
-        excludeFilter.getExcludes().add("mobile");
+        excludeFilter.getExcludes().add(null);
         LOG.info("请求参数: {}", JSON.toJSONString(arguments, excludeFilter));
     }
 
@@ -88,7 +88,7 @@ public class LogAspect {
         Object result = proceedingJoinPoint.proceed();
         // 排除字段，敏感字段或太长的字段不显示：身份证、手机号、邮箱、密码等
         SimplePropertyPreFilter excludeFilter = new SimplePropertyPreFilter();
-        excludeFilter.getExcludes().add("mobile");
+        excludeFilter.getExcludes().add(null);
         LOG.info("返回结果: {}", JSON.toJSONString(result, excludeFilter));
         LOG.info("------------- 结束 耗时：{} ms -------------", System.currentTimeMillis() - startTime);
         return result;
