@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
+import type { AxiosInstance, AxiosRequestConfig } from "axios";
 import { notification } from "ant-design-vue";
 
 /** 后端统一返回结构 */
@@ -21,23 +21,28 @@ const instance: AxiosInstance = axios.create({
 
 // 响应拦截器：解包后端结构，统一错误提示
 instance.interceptors.response.use(
-  (response: AxiosResponse<Result>) => response.data,
+  (response) => response,
   (error) => {
     const msg =
       error.response?.data?.message || error.message || "网络请求失败";
     notification.error({ message: msg });
     return Promise.reject(error);
-  }
+  },
 );
 
 /** GET 请求，返回已解包的 Result */
 function get<T = unknown>(url: string, config?: AxiosRequestConfig) {
-  return instance.get(url, config) as Promise<Result<T>>;
+  return instance.get<Result<T>>(url, config).then((res) => res.data);
 }
 
 /** POST 请求，返回已解包的 Result */
-function post<T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig) {
-  return instance.post(url, data, config) as Promise<Result<T>>;
+function post<T = unknown>(
+  url: string,
+  data?: unknown,
+  config?: AxiosRequestConfig,
+) {
+  console.log("环境", BASE_URL);
+  return instance.post<Result<T>>(url, data, config).then((res) => res.data);
 }
 
 export const request = { get, post };

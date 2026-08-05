@@ -13,10 +13,10 @@ export interface SendCodeParams {
 
 /** 会员登录 */
 export function login(params: LoginParams) {
-  return request.post("/member/member/login", params);
+  return request.post("/member/login", params);
 }
 
 /** 发送登录验证码 */
 export function sendCode(params: SendCodeParams) {
-  return request.post("/member/member/send-code", params);
+  return request.post("/member/send-code", params);
 }
