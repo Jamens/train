@@ -2,6 +2,7 @@
 import { reactive } from "vue";
 import { notification } from "ant-design-vue";
 import { login, sendCode } from "@/api";
+import router from "@/routes";
 
 interface loginForm {
   mobile: string;
@@ -20,10 +21,15 @@ const onFinish = (values: any) => {
     mobile: loginForm.mobile,
     code: loginForm.code,
   }).then((res) => {
-    const { success } = res;
+    const { success, message } = res;
     if (success) {
       notification.success({
         message: "登录成功",
+      });
+      router.push({ path: "/" });
+    } else {
+      notification.error({
+        message: message,
       });
     }
   });
