@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import axios from "axios";
 import { reactive } from "vue";
 
 interface loginForm {
@@ -21,6 +22,13 @@ const onFinishFailed = (errorInfo: any) => {
 };
 const sendCode = () => {
   console.log("sendCode");
+  axios
+    .post("http://localhost:8000/member/member/send-code", {
+      mobile: loginForm.mobile,
+    })
+    .then((res) => {
+      console.log(res);
+    });
 };
 </script>
 
