@@ -49,21 +49,18 @@ public class MemberService {
 
     public void sendCode(MemberSendCodeReq req) {
         String mobile = req.getMobile();
-        Member members = selectByMobile(mobile);
-        if (ObjectUtil.isNull(members)) {
-            logger.info("手机号{}未注册", mobile);
-            Member member = new Member();
+        Member member = selectByMobile(mobile);
+        if (ObjectUtil.isNull(member)) {
+            logger.info("手机号{}未注册，自动注册", mobile);
+            member = new Member();
             member.setId(SnowUtil.getSnowflakeId());
             member.setMobile(mobile);
             memberMapper.insert(member);
-        } else {
-            logger.info("手机号{}已注册", mobile);
         }
-//        String code = RandomUtil.randomString(4);
-        String code = "1234";
+        String code = RandomUtil.randomNumbers(4);
+        memberMapper.updateByPrimaryKey(member);
         logger.info("手机号{}发送验证码{}", mobile, code);
         //后续可对接短信平台
-
     }
 
     public MemberLoginResp sendLogin(MemberLoginReq req) {
