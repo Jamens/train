@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import axios from "axios";
 import { reactive } from "vue";
+import { notification } from "ant-design-vue";
+import { login, sendCode } from "@/api";
 
 interface loginForm {
   mobile: string;
@@ -15,20 +16,40 @@ const loginForm = reactive<loginForm>({
 });
 const onFinish = (values: any) => {
   console.log("Success:", values);
+  login({
+    mobile: loginForm.mobile,
+    code: loginForm.code,
+  }).then((res) => {
+    const { success } = res;
+    if (success) {
+      notification.success({
+        message: "登录成功",
+      });
+    }
+  });
 };
 
 const onFinishFailed = (errorInfo: any) => {
   console.log("Failed:", errorInfo);
 };
-const sendCode = () => {
-  console.log("sendCode");
-  axios
-    .post("http://localhost:8000/member/member/send-code", {
-      mobile: loginForm.mobile,
-    })
-    .then((res) => {
-      console.log(res);
-    });
+
+// 中国大陆手机号校验：1 开头的 11 位数字
+const MOBILE_REGEX = /^1\d{10}$/;
+
+const handleSendCode = () => {
+  if (!loginForm.mobile) {
+    notification.warning({ message: "请先输入手机号" });
+    return;
+  }
+  if (!MOBILE_REGEX.test(loginForm.mobile)) {
+    notification.warning({ message: "手机号格式不正确" });
+    return;
+  }
+  sendCode({ mobile: loginForm.mobile }).then((res) => {
+    if (res.success) {
+      notification.success({ message: "发送成功" });
+    }
+  });
 };
 </script>
 
@@ -59,7 +80,7 @@ const sendCode = () => {
           >
             <a-input v-model:value="loginForm.code">
               <template #addonAfter>
-                <a @click="sendCode">获取验证码</a>
+                <a @click="handleSendCode">获取验证码</a>
               </template>
             </a-input>
           </a-form-item>
