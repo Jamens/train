@@ -2,9 +2,9 @@ package com.junhao.member.service;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.jwt.JWTUtil;
 import com.junhao.common.exception.BusinessException;
 import com.junhao.common.exception.BusinessExceptionEnum;
 import com.junhao.common.util.SnowUtil;
@@ -20,8 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class MemberService {
@@ -74,7 +74,12 @@ public class MemberService {
             throw new BusinessException(BusinessExceptionEnum.MEMBER_CODE_NOT_MATCH);
 
         }
-        return BeanUtil.copyProperties(members, MemberLoginResp.class);
+        MemberLoginResp memberLoginResp = BeanUtil.copyProperties(members, MemberLoginResp.class);
+        Map<String, Object> map = BeanUtil.beanToMap(memberLoginResp);
+        String key = "junhao";
+        String token = JWTUtil.createToken(map,key.getBytes());
+        memberLoginResp.setToken(token);
+        return memberLoginResp;
 
     }
 
