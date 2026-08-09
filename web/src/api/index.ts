@@ -1,4 +1,5 @@
 import request from "@/utils/request";
+import type { UserInfo } from "@/store";
 
 /** 登录请求参数 */
 export interface LoginParams {
@@ -11,12 +12,25 @@ export interface SendCodeParams {
   mobile: string;
 }
 
+/** 登录接口返回结构（content 在响应体顶层） */
+export interface LoginResponse {
+  success: boolean;
+  message?: string;
+  content?: UserInfo;
+}
+
+/** 通用响应结构 */
+export interface ApiResponse {
+  success: boolean;
+  message?: string;
+}
+
 /** 会员登录 */
 export function login(params: LoginParams) {
-  return request.post("/member/login", params);
+  return request.post<LoginResponse>("/member/login", params);
 }
 
 /** 发送登录验证码 */
 export function sendCode(params: SendCodeParams) {
-  return request.post("/member/send-code", params);
+  return request.post<ApiResponse>("/member/send-code", params);
 }

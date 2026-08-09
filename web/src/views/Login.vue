@@ -2,7 +2,10 @@
 import { reactive } from "vue";
 import { notification } from "ant-design-vue";
 import { login, sendCode } from "@/api";
+import { useAuthStore } from "@/store";
 import router from "@/routes";
+
+const auth = useAuthStore();
 
 interface loginForm {
   mobile: string;
@@ -23,6 +26,11 @@ const onFinish = (values: any) => {
   }).then((res) => {
     const { success, message } = res;
     if (success) {
+      const content = res.content;
+      if (content) {
+        // id 转为字符串，避免大整数精度丢失
+        auth.login({ ...content, id: String(content.id) });
+      }
       notification.success({
         message: "登录成功",
       });

@@ -1,6 +1,7 @@
 import axios from "axios";
 import type { AxiosInstance, AxiosRequestConfig } from "axios";
 import { notification } from "ant-design-vue";
+import { useAuthStore } from "@/store";
 
 /** 后端统一返回结构 */
 export interface Result<T = unknown> {
@@ -19,6 +20,15 @@ const instance: AxiosInstance = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
+// 请求拦截器：自动附加登录令牌
+instance.interceptors.request.use((config) => {
+  const token = useAuthStore().user?.token;
+  if (token) {
+    config.headers.set("Authorization", `Bearer ${token}`);
+  }
+  return config;
+});
+
 // 响应拦截器：解包后端结构，统一错误提示
 instance.interceptors.response.use(
   (response) => response,
@@ -30,19 +40,18 @@ instance.interceptors.response.use(
   },
 );
 
-/** GET 请求，返回已解包的 Result */
+/** GET 请求，返回已解包的响应体 */
 function get<T = unknown>(url: string, config?: AxiosRequestConfig) {
-  return instance.get<Result<T>>(url, config).then((res) => res.data);
+  return instance.get<T>(url, config).then((res) => res.data);
 }
 
-/** POST 请求，返回已解包的 Result */
+/** POST 请求，返回已解包的响应体 */
 function post<T = unknown>(
   url: string,
   data?: unknown,
   config?: AxiosRequestConfig,
 ) {
-  console.log("环境", BASE_URL);
-  return instance.post<Result<T>>(url, data, config).then((res) => res.data);
+  return instance.post<T>(url, data, config).then((res) => res.data);
 }
 
 export const request = { get, post };
