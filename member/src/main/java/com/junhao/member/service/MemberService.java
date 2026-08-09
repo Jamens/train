@@ -7,6 +7,7 @@ import cn.hutool.core.util.RandomUtil;
 import cn.hutool.jwt.JWTUtil;
 import com.junhao.common.exception.BusinessException;
 import com.junhao.common.exception.BusinessExceptionEnum;
+import com.junhao.common.util.JwtUtil;
 import com.junhao.common.util.SnowUtil;
 import com.junhao.member.domain.Member;
 import com.junhao.member.domain.MemberExample;
@@ -75,9 +76,7 @@ public class MemberService {
 
         }
         MemberLoginResp memberLoginResp = BeanUtil.copyProperties(members, MemberLoginResp.class);
-        Map<String, Object> map = BeanUtil.beanToMap(memberLoginResp);
-        String key = "junhao";
-        String token = JWTUtil.createToken(map,key.getBytes());
+        String token = JwtUtil.createToken(memberLoginResp.getId(), memberLoginResp.getMobile());
         memberLoginResp.setToken(token);
         return memberLoginResp;
 
