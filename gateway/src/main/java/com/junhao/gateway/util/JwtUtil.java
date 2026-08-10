@@ -1,4 +1,4 @@
-package com.junhao.common.util;
+package com.junhao.gateway.util;
 
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateTime;
@@ -15,6 +15,9 @@ import java.util.Map;
 public class JwtUtil {
     private static final Logger LOG = LoggerFactory.getLogger(JwtUtil.class);
 
+    /**
+     * 盐值很重要，不能泄漏，且每个项目都应该不一样，可以放到配置文件中
+     */
     private static final String key = "junhao";
 
     public static String createToken(Long id, String mobile) {
@@ -36,11 +39,16 @@ public class JwtUtil {
     }
 
     public static boolean validate(String token) {
-        JWT jwt = JWTUtil.parseToken(token).setKey(key.getBytes());
-        // validate包含了verify
-        boolean validate = jwt.validate(0);
-        LOG.info("JWT token校验结果：{}", validate);
-        return validate;
+        try {
+            JWT jwt = JWTUtil.parseToken(token).setKey(key.getBytes());
+            // validate包含了verify
+            boolean validate = jwt.validate(0);
+            LOG.info("JWT token校验结果：{}", validate);
+            return validate;
+        } catch (Exception e) {
+            LOG.error("JWT token校验异常", e);
+            return false;
+        }
     }
 
     public static JSONObject getJSONObject(String token) {
@@ -54,9 +62,9 @@ public class JwtUtil {
     }
 
     public static void main(String[] args) {
-        createToken(1L, "123");
+        createToken(2084631790395461632L, "15812788124");
 
-        String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYmYiOjE3ODYzMDMyMDAsIm1vYmlsZSI6IjEzMjI2NjUyNTg5IiwiaWQiOjIwODY1MzI5MTk3MjczNjIwNDgsImV4cCI6MTc4NjMwMzIxMCwiaWF0IjoxNzg2MzAzMjAwfQ.2GKfmVWq81QE5Zv4XCHwoJJMjU95g0IRZoWT--0QR9w";
+        String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYmYiOjE3ODYzOTUwMjUsIm1vYmlsZSI6IjE1ODEyNzg4MTI0IiwiaWQiOjIwODQ2MzE3OTAzOTU0NjE2MzIsImV4cCI6MTc4NjQ4MTQyNSwiaWF0IjoxNzg2Mzk1MDI1fQ.g9kBKnHTWZt64dh39ZaODchWG_t5ub7aQP93ondQZQg";
         validate(token);
 
         getJSONObject(token);
