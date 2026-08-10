@@ -40,8 +40,8 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:8000/member/member/count
+GET http://localhost:8000/member/member/count
 Content-Type: application/json
-token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYmYiOjE3ODYzOTQ2MDMsIm1vYmlsZSI6IjE1ODEyNzg4MTI0IiwiaWQiOjIwODQ2MzE3OTAzOTU0NjE2MzIsImV4cCI6MTc4NjQ4MTAwMywiaWF0IjoxNzg2Mzk0NjAzfQ.hZSHbddUBrvYl1QaGcRdvVT1o_x7TdNc0HtnHjs_09s"
+token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYmYiOjE3ODYzOTU3NTYsIm1vYmlsZSI6IjE1ODEyNzg4MTI0IiwiaWQiOjIwODQ2MzE3OTAzOTU0NjE2MzIsImV4cCI6MTc4NjQ4MjE1NiwiaWF0IjoxNzg2Mzk1NzU2fQ.bxYupQgDT0vYgufRNFqzYlzKdT_En7bqAuYxPMAb7Cs
 
 ###

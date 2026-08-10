@@ -29,6 +29,13 @@ public class LoginMemberFilter implements Ordered, GlobalFilter {
         }
         // 获取header的token参数
         String token = exchange.getRequest().getHeaders().getFirst("token");
+        if (token != null) {
+            token = token.trim();
+            // 兼容 http 客户端把引号也放进 header 值的情况
+            if (token.startsWith("\"") && token.endsWith("\"")) {
+                token = token.substring(1, token.length() - 1);
+            }
+        }
         LOG.info("会员登录验证开始，token：{}", token);
         if (token == null || token.isEmpty()) {
             LOG.info( "token为空，请求被拦截" );
