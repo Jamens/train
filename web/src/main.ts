@@ -8,4 +8,4 @@ import "ant-design-vue/dist/reset.css";
 import "./style.css";
 const pinia = createPinia();
 const app = createApp(App);
-app.use(Antd).use(router).use(pinia).mount("#app");
+app.use(Antd).use(pinia).use(router).mount("#app");

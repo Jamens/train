@@ -34,3 +34,15 @@ export function login(params: LoginParams) {
 export function sendCode(params: SendCodeParams) {
   return request.post<ApiResponse>("/member/send-code", params);
 }
+
+/** 会员数量接口返回结构（content 为数字） */
+export interface MemberCountResponse {
+  success: boolean;
+  message?: string;
+  content?: number;
+}
+
+/** 获取会员数量信息 */
+export function getMemberCount() {
+  return request.get<MemberCountResponse>("/member/count");
+}

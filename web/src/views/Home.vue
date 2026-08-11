@@ -17,7 +17,7 @@
             minHeight: '280px',
           }"
         >
-          Content
+          会员数量: {{ memberCount }}
         </a-layout-content>
       </a-layout>
     </a-layout>
@@ -26,6 +26,21 @@
 <script lang="ts" setup>
 import Header from "@/components/Header.vue";
 import Sider from "@/components/Sider.vue";
+import { onMounted, ref } from "vue";
+import { getMemberCount } from "@/api";
+
+const memberCount = ref<number>(0);
+onMounted(() => {
+  getMemberCounts();
+});
+
+const getMemberCounts = async () => {
+  const res = await getMemberCount();
+  if (res.success) {
+    memberCount.value = res.content || 0;
+  }
+  // memberCount.value = res.data.data;
+};
 </script>
 <style scoped>
 .site-layout-background {
