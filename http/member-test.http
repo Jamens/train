@@ -45,3 +45,15 @@ Content-Type: application/json
 token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYmYiOjE3ODYzOTU3NTYsIm1vYmlsZSI6IjE1ODEyNzg4MTI0IiwiaWQiOjIwODQ2MzE3OTAzOTU0NjE2MzIsImV4cCI6MTc4NjQ4MjE1NiwiaWF0IjoxNzg2Mzk1NzU2fQ.bxYupQgDT0vYgufRNFqzYlzKdT_En7bqAuYxPMAb7Cs
 
 ###
+
+POST http://localhost:8001/member/passenger/save
+Content-Type: application/json
+
+{
+  "memberId": "1",
+  "name": "test",
+  "idCard": "123321",
+  "type": "1"
+}
+
+###
