@@ -27,10 +27,17 @@ public class LoginMemberFilter implements Ordered, GlobalFilter {
         } else {
             LOG.info("需要登录验证：{}", path);
         }
-        // 获取header的token参数
+        // 获取header的token参数（兼容 token / Token 两种头名）
         String token = exchange.getRequest().getHeaders().getFirst("token");
+        if (token == null) {
+            token = exchange.getRequest().getHeaders().getFirst("Token");
+        }
         if (token != null) {
             token = token.trim();
+            // 兼容前端使用 "Bearer xxx" 标准写法
+            if (token.toLowerCase().startsWith("bearer ")) {
+                token = token.substring(7).trim();
+            }
             // 兼容 http 客户端把引号也放进 header 值的情况
             if (token.startsWith("\"") && token.endsWith("\"")) {
                 token = token.substring(1, token.length() - 1);
