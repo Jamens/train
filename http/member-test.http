@@ -38,6 +38,12 @@ Content-Type: application/json
 	"code": "1234"
 }
 
+> {%
+client.log(JSON.stringify(response.body))
+client.log(JSON.stringify(response.body.content.token))
+client.global.set("token", response.body.content.token)
+  %}
+
 ###
 
 GET http://localhost:8000/member/member/count
@@ -46,8 +52,9 @@ token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYmYiOjE3ODYzOTU3NTYsIm1vYmlsZSI6
 
 ###
 
-POST http://localhost:8001/member/passenger/save
+POST http://localhost:8000/member/passenger/save
 Content-Type: application/json
+token: {{token}}
 
 {
   "memberId": "1",
