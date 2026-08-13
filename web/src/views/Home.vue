@@ -5,9 +5,9 @@
       <Sider />
       <a-layout style="padding: 0 24px 24px">
         <a-breadcrumb style="margin: 16px 0">
-          <a-breadcrumb-item>Home</a-breadcrumb-item>
-          <a-breadcrumb-item>List</a-breadcrumb-item>
-          <a-breadcrumb-item>App</a-breadcrumb-item>
+          <a-breadcrumb-item v-for="(item, i) in crumbs" :key="i">
+            {{ item }}
+          </a-breadcrumb-item>
         </a-breadcrumb>
         <a-layout-content
           :style="{
@@ -17,7 +17,8 @@
             minHeight: '280px',
           }"
         >
-          会员数量: {{ memberCount }}
+          <!-- 会员数量: {{ memberCount }} -->
+          <router-view></router-view>
         </a-layout-content>
       </a-layout>
     </a-layout>
@@ -26,8 +27,19 @@
 <script lang="ts" setup>
 import Header from "@/components/Header.vue";
 import Sider from "@/components/Sider.vue";
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
+import { useRoute } from "vue-router";
 import { getMemberCount } from "@/api";
+
+const route = useRoute();
+
+// 由当前路由路径动态生成面包屑（按 / 分段并首字母大写）
+const crumbs = computed(() =>
+  route.path
+    .split("/")
+    .filter(Boolean)
+    .map((s) => s.charAt(0).toUpperCase() + s.slice(1)),
+);
 
 const memberCount = ref<number>(0);
 onMounted(() => {

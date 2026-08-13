@@ -3,6 +3,8 @@ import type { RouteRecordRaw } from "vue-router";
 import Home from "../views/Home.vue";
 import Login from "../views/Login.vue";
 import { useAuthStore } from "@/store";
+import Welcome from "../views/Home/Welcome.vue";
+import Passenger from "../views/Home/Passenger.vue";
 
 // 增强 RouteMeta 类型，支持 requiresAuth
 declare module "vue-router" {
@@ -12,7 +14,20 @@ declare module "vue-router" {
 }
 
 const routes: RouteRecordRaw[] = [
-  { path: "/", component: Home, meta: { requiresAuth: true } },
+  {
+    path: "/",
+    component: Home,
+    redirect: { path: "/welcome" },
+    meta: { requiresAuth: true },
+    children: [
+      { path: "/welcome", component: Welcome, meta: { requiresAuth: true } },
+      {
+        path: "/passenger",
+        component: Passenger,
+        meta: { requiresAuth: true },
+      },
+    ],
+  },
   { path: "/Login", component: Login },
 ];
 

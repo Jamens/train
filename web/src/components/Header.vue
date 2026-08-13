@@ -28,24 +28,32 @@
       </div>
     </div>
     <a-menu
-      v-model:selectedKeys="selectedKeys1"
+      v-model:selectedKeys="selectedKeys"
       theme="dark"
       mode="horizontal"
       :style="{ lineHeight: '64px' }"
     >
-      <a-menu-item key="1">nav 1</a-menu-item>
-      <a-menu-item key="2">nav 2</a-menu-item>
-      <a-menu-item key="3">nav 3</a-menu-item>
+      <a-menu-item key="/welcome"
+        ><router-link to="/welcome">
+          <coffee-outlined /> &nbsp; 欢迎
+        </router-link></a-menu-item
+      >
+      <a-menu-item key="/passenger"
+        ><router-link to="/passenger">
+          <user-outlined /> &nbsp; 乘车人管理
+        </router-link></a-menu-item
+      >
     </a-menu>
   </a-layout-header>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/store";
+import { CoffeeOutlined, UserOutlined } from "@ant-design/icons-vue";
 
 const router = useRouter();
-const selectedKeys1 = ref<string[]>(["2"]);
+const selectedKeys = ref<string[]>(["/welcome"]);
 const auth = useAuthStore();
 
 function logout() {
@@ -56,6 +64,13 @@ function logout() {
 function goLogin() {
   router.push({ path: "/Login" });
 }
+watch(
+  () => router.currentRoute.value.path,
+  (path) => {
+    selectedKeys.value = [path];
+  },
+  { immediate: true },
+);
 </script>
 <style scoped>
 #components-layout-demo-top-side-2 {
