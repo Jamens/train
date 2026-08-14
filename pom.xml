@@ -39,6 +39,7 @@
         <fastjson2.version>2.0.62</fastjson2.version>
         <hutool.version>5.8.47</hutool.version>
         <spring-boot-starter-aop.version>4.0.0-M2</spring-boot-starter-aop.version>
+        <pagehelper.version>4.1.1</pagehelper.version>
     </properties>
 <!--    <dependencies>-->
 <!--        <dependency>-->
@@ -105,6 +106,11 @@
                 <groupId>com.mysql</groupId>
                 <artifactId>mysql-connector-j</artifactId>
                 <version>9.7.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.pagehelper</groupId>
+                <artifactId>pagehelper-spring-boot-starter</artifactId>
+                <version>${pagehelper.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
