@@ -22,11 +22,11 @@ public class JwtUtil {
         DateTime expTime = now.offsetNew(DateField.HOUR, 24);
         Map<String, Object> payload = new HashMap<>();
         // 签发时间
-        payload.put(JWTPayload.ISSUED_AT, now);
+        payload.put(JWTPayload.ISSUED_AT, now.toJdkDate());
         // 过期时间
-        payload.put(JWTPayload.EXPIRES_AT, expTime);
+        payload.put(JWTPayload.EXPIRES_AT, expTime.toJdkDate());
         // 生效时间
-        payload.put(JWTPayload.NOT_BEFORE, now);
+        payload.put(JWTPayload.NOT_BEFORE, now.toJdkDate());
         // 内容
         payload.put("id", id);
         payload.put("mobile", mobile);

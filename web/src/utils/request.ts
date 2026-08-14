@@ -23,7 +23,6 @@ const instance: AxiosInstance = axios.create({
 // 请求拦截器：自动附加登录令牌
 instance.interceptors.request.use((config) => {
   const token = useAuthStore().user?.token;
-  console.log("token", token);
   if (token) {
     config.headers.set("token", `Bearer ${token}`);
   }

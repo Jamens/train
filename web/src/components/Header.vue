@@ -1,6 +1,6 @@
 <template>
   <a-layout-header class="header" id="components-layout-demo-top-side-2">
-    <div class="logo relative" />
+    <div class="logo relative text-white">Train</div>
     <div class="ml-auto flex items-center pr-10 absolute right-0">
       <a-dropdown
         v-if="auth.isLoggedIn"
@@ -80,8 +80,10 @@ watch(
   float: left;
   width: 120px;
   height: 31px;
+  line-height: 31px;
+  font-size: 16px;
+  font-weight: 500;
   margin: 16px 24px 16px 0;
-  background: rgba(255, 255, 255, 0.3);
 }
 
 .ant-row-rtl #components-layout-demo-top-side-2 .logo {
