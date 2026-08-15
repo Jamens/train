@@ -65,3 +65,8 @@ export function getPassengergetList(params: PageReq) {
 export function savePassenger(params: savePassengerReq) {
   return request.post<SavePassengerResp>("/passenger/save", params);
 }
+
+/** 删除乘客 */
+export function deletePassenger(id: number) {
+  return request.delete<ApiResponse>(`/passenger/delete/${id}`);
+}

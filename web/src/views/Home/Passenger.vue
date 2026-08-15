@@ -1,11 +1,32 @@
 <template>
-  <a-button type="primary" @click="showModal">新增</a-button>
+  <a-space>
+    <a-button
+      type="primary"
+      @click="handleQuery({ page: 1, size: pagination.pageSize })"
+      >刷新</a-button
+    >
+    <a-button type="primary" @click="showModal">新增</a-button>
+  </a-space>
   <a-table
     :dataSource="passengers"
     :columns="columns"
     :pagination="pagination"
     @change="handleTableChange"
-  />
+  >
+    <template #bodyCell="{ column, record }">
+      <template v-if="column.key === 'operation'">
+        <a-button type="link" @click="edit(record)">编辑</a-button>
+        <a-popconfirm
+          title="确认删除该乘车人？"
+          ok-text="删除"
+          cancel-text="取消"
+          @confirm="handleDelete(record)"
+        >
+          <a-button type="link" danger>删除</a-button>
+        </a-popconfirm>
+      </template>
+    </template>
+  </a-table>
   <a-modal
     v-model:open="visible"
     title="乘车人"
@@ -20,13 +41,25 @@
       :label-col="{ span: 4 }"
       :wrapper-col="{ span: 20 }"
     >
-      <a-form-item label="姓名" name="name" :rules="[{ required: true, message: '请输入姓名' }]">
+      <a-form-item
+        label="姓名"
+        name="name"
+        :rules="[{ required: true, message: '请输入姓名' }]"
+      >
         <a-input v-model:value="passenger.name" />
       </a-form-item>
-      <a-form-item label="身份证" name="idCard" :rules="[{ required: true, message: '请输入身份证' }]">
+      <a-form-item
+        label="身份证"
+        name="idCard"
+        :rules="[{ required: true, message: '请输入身份证' }]"
+      >
         <a-input v-model:value="passenger.idCard" />
       </a-form-item>
-      <a-form-item label="类型" name="type" :rules="[{ required: true, message: '请选择类型' }]">
+      <a-form-item
+        label="类型"
+        name="type"
+        :rules="[{ required: true, message: '请选择类型' }]"
+      >
         <a-select v-model:value="passenger.type">
           <a-select-option value="1">成人</a-select-option>
           <a-select-option value="2">儿童</a-select-option>
@@ -38,8 +71,8 @@
 </template>
 <script lang="ts" setup>
 import { notification } from "ant-design-vue";
-import { onMounted, reactive, ref } from "vue";
-import { getPassengergetList, savePassenger } from "@/api";
+import { nextTick, onMounted, reactive, ref } from "vue";
+import { deletePassenger, getPassengergetList, savePassenger } from "@/api";
 import type { PassengerQueryResp, PassengerVO } from "@/api/type";
 
 // 乘车人表单初始状态（新增/重置时复用）
@@ -99,11 +132,38 @@ const columns = [
     key: "type",
     customRender: ({ value }: { value: string }) => typeMap[value] ?? value,
   },
+  {
+    title: "操作",
+    key: "operation",
+  },
 ];
 
 const showModal = () => {
   resetPassenger();
   visible.value = true;
+  // 清除上一次触发校验残留的红字（表单错误状态与字段值相互独立）
+  nextTick(() => formRef.value?.clearValidate());
+};
+
+const edit = (record: PassengerVO) => {
+  resetPassenger();
+  const { createTime, updateTime, ...editable } = record;
+  Object.assign(passenger, editable);
+  visible.value = true;
+  // 回填后清除可能残留的校验红字（与新增共用同一表单实例）
+  nextTick(() => formRef.value?.clearValidate());
+};
+
+const handleDelete = (record: PassengerVO) => {
+  if (record.id == null) return;
+  deletePassenger(record.id).then((res) => {
+    if (res.success) {
+      notification.success({ description: "删除成功！", message: "" });
+      handleQuery({ page: 1, size: pagination.pageSize });
+    } else {
+      notification.error({ description: res.message, message: "" });
+    }
+  });
 };
 
 const handleQuery = (param: { page: any; size: any }) => {
@@ -130,7 +190,7 @@ const handleOk = () => {
       savePassenger(passenger).then((res) => {
         if (res.success) {
           notification.success({
-            description: "保存成功！",
+            description: passenger.id ? "编辑成功！" : "保存成功！",
             message: "",
           });
           visible.value = false;

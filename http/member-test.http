@@ -10,18 +10,18 @@ Accept: application/json
 
 <> 2026-08-03T020508.200.json
 ###
-
+#查询乘车人数量
 GET http://localhost:8000/member/member/count
 Accept: application/json
 ###
-
+#注册
 POST http://localhost:8000/member/member/register
 Content-Type: application/x-www-form-urlencoded
 
 mobile =123
 
 ###
-
+#发送验证码
 POST http://localhost:8000/member/member/send-code
 Content-Type: application/json
 
@@ -29,7 +29,7 @@ Content-Type: application/json
 	"mobile": "15812788124"
 }
 ###
-
+#登录
 POST http://localhost:8000/member/member/login
 Content-Type: application/json
 
@@ -45,13 +45,13 @@ client.global.set("token", response.body.content.token)
   %}
 
 ###
-
+#查询乘车人列表
 GET http://localhost:8000/member/member/count
 Content-Type: application/json
 token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYmYiOjE3ODYzOTU3NTYsIm1vYmlsZSI6IjE1ODEyNzg4MTI0IiwiaWQiOjIwODQ2MzE3OTAzOTU0NjE2MzIsImV4cCI6MTc4NjQ4MjE1NiwiaWF0IjoxNzg2Mzk1NzU2fQ.bxYupQgDT0vYgufRNFqzYlzKdT_En7bqAuYxPMAb7Cs
 
 ###
-
+#保存乘车人
 POST http://localhost:8000/member/passenger/save
 Content-Type: application/json
 token: {{token}}
@@ -63,8 +63,30 @@ token: {{token}}
 }
 
 ###
+#编辑乘车人
+POST http://localhost:8000/member/passenger/save
+Content-Type: application/json
+token: {{token}}
+
+{
+  "id": "2088273083134775296",
+  "memberId": "2084631790395461632",
+  "name": "test2",
+  "idCard": "2344",
+  "type": "3"
+}
+
+###
 
 GET http://localhost:8000/member/passenger/query-list?page=1&size=10
+Content-Type: application/json
+token: {{token}}
+
+
+###
+#删除乘车人
+
+DELETE http://localhost:8000/member/passenger/delete/2088268249354604544
 Content-Type: application/json
 token: {{token}}
 

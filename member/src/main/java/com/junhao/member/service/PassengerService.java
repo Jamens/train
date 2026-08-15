@@ -31,23 +31,42 @@ public class PassengerService {
     public void save(PassengerSaveReq req) {
         DateTime now = DateTime.now();
         Passenger passenger = BeanUtil.copyProperties(req, Passenger.class);
-        passenger.setMemberId(LoginMemberContext.getId());
-        passenger.setId(SnowUtil.getSnowflakeId());
-        passenger.setCreateTime(now.toLocalDateTime());
-        passenger.setUpdateTime(now.toLocalDateTime());
-        passengerMapper.insert(passenger);
+        Long reqId = null;
+        if (req.getId() != null) {
+            try {
+                reqId = Long.parseLong(req.getId());
+            } catch (NumberFormatException e) {
+                LOG.error("id转换失败：{}", req.getId());}
+        }
+        if (ObjectUtil.isNull(reqId)) {
+            passenger.setId(SnowUtil.getSnowflakeId());
+            passenger.setMemberId(LoginMemberContext.getId());
+            passenger.setCreateTime(now.toLocalDateTime());
+            passenger.setUpdateTime(now.toLocalDateTime());
+            passengerMapper.insert(passenger);
+        } else {
+            passenger.setId(reqId);
+            if (req.getMemberId() != null) {
+                try {
+                    passenger.setMemberId(Long.parseLong(req.getMemberId()));
+                } catch (NumberFormatException ignored) {
+                }
+            }
+            passenger.setUpdateTime(now.toLocalDateTime());
+            passengerMapper.updateByPrimaryKey(passenger);
+        }
     }
 
     public PageResp<PassengerQueryResp> queryList(PassengerQueryReq req) {
         PassengerExample passengerExample = new PassengerExample();
         PassengerExample.Criteria criteria = passengerExample.createCriteria();
-        if(ObjectUtil.isNotNull(req.getMemberId())){
+        if (ObjectUtil.isNotNull(req.getMemberId())) {
             criteria.andMemberIdEqualTo(req.getMemberId());
         }
 
         LOG.info("查询页码：{}", req.getPage());
         LOG.info("每页条数：{}", req.getSize());
-        PageHelper.startPage(req.getPage(),req.getSize());
+        PageHelper.startPage(req.getPage(), req.getSize());
         List<Passenger> passengerList = passengerMapper.selectByExample(passengerExample);
         PageInfo<Passenger> pageInfo = new PageInfo<>(passengerList);
         LOG.info("总行数：{}", pageInfo.getTotal());
@@ -58,5 +77,9 @@ public class PassengerService {
         pageResp.setList(list);
         return pageResp;
 
+    }
+
+    public void delete(Long id) {
+        passengerMapper.deleteByPrimaryKey(id);
     }
 }

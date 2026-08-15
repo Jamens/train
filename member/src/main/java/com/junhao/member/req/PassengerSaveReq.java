@@ -11,8 +11,8 @@ import java.util.Date;
 @Setter
 @ToString
 public class PassengerSaveReq {
-    private Long id;
-    private Long memberId;
+    private String id;
+    private String memberId;
     @NotBlank(message = "旅客姓名不能为空")
     private String name;
     @NotBlank(message = "身份证号不能为空")

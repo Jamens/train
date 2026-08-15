@@ -54,5 +54,10 @@ function post<T = unknown>(
   return instance.post<T>(url, data, config).then((res) => res.data);
 }
 
-export const request = { get, post };
+/** DELETE 请求，返回已解包的响应体 */
+function del<T = unknown>(url: string, config?: AxiosRequestConfig) {
+  return instance.delete<T>(url, config).then((res) => res.data);
+}
+
+export const request = { get, post, delete: del };
 export default request;
