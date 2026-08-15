@@ -190,7 +190,7 @@ const handleOk = () => {
       savePassenger(passenger).then((res) => {
         if (res.success) {
           notification.success({
-            description: passenger.id ? "编辑成功！" : "保存成功！",
+            description: passenger.id ? "编辑成功！" : "新增成功！",
             message: "",
           });
           visible.value = false;
