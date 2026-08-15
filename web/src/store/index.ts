@@ -10,12 +10,28 @@ export interface UserInfo {
 
 const STORAGE_KEY = "auth-user";
 
-/** 从 localStorage 恢复登录态（刷新页面后保持登录） */
+/** token 有效期（毫秒）：与后端约定一致，24 小时 */
+const TOKEN_TTL = 24 * 60 * 60 * 1000;
+
+/** 持久化结构：用户信息 + 过期时间戳 */
+interface StoredAuth {
+  user: UserInfo;
+  expireAt: number;
+}
+
+/** 从 localStorage 恢复登录态（校验是否过期，刷新页面后保持登录） */
 function loadUser(): UserInfo | null {
   const raw = localStorage.getItem(STORAGE_KEY);
   if (!raw) return null;
   try {
-    return JSON.parse(raw) as UserInfo;
+    const stored = JSON.parse(raw) as StoredAuth;
+    if (!stored.user?.token) return null;
+    // 已过期则视为未登录，并清理存储
+    if (Date.now() > stored.expireAt) {
+      localStorage.removeItem(STORAGE_KEY);
+      return null;
+    }
+    return stored.user;
   } catch {
     return null;
   }
@@ -33,7 +49,11 @@ export const useAuthStore = defineStore("auth", () => {
 
   function login(info: UserInfo) {
     user.value = info;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(info));
+    const stored: StoredAuth = {
+      user: info,
+      expireAt: Date.now() + TOKEN_TTL,
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
   }
 
   function logout() {
