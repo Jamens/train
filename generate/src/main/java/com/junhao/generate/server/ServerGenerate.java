@@ -1,6 +1,8 @@
 package com.junhao.generate.server;
 
 
+import com.junhao.generate.util.DbUtil;
+import com.junhao.generate.util.Field;
 import com.junhao.generate.util.FreemarkerUtil;
 import freemarker.template.TemplateException;
 import org.dom4j.Document;
@@ -12,6 +14,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ServerGenerate {
@@ -26,7 +29,7 @@ public class ServerGenerate {
         }
     }
 
-    public static void main(String[] args) throws DocumentException, IOException, TemplateException {
+    public static void main(String[] args) throws Exception {
         // 获取mybatis-generator
         String generatorPath = getGeneratorPath();
         // 比如generator-config-member.xml，得到module = member
@@ -43,6 +46,16 @@ public class ServerGenerate {
         Node domainObjectName = table.selectSingleNode("@domainObjectName");
         System.out.println(tableName.getText() + "/" + domainObjectName.getText());
 
+        // connectionURL / userId / password 是 <jdbcConnection> 的属性，不是 <property> 子元素
+        Node connectionURL = document.selectSingleNode("//jdbcConnection/@connectionURL");
+        Node userId = document.selectSingleNode("//jdbcConnection/@userId");
+        Node password = document.selectSingleNode("//jdbcConnection/@password");
+        DbUtil.url = connectionURL.getText();
+        DbUtil.user = userId.getText();
+        DbUtil.password = password.getText();
+        System.out.println("url: " + DbUtil.url);
+        System.out.println("user: " + DbUtil.user);
+
         // 示例：表名 junhao_test
         // Domain = JunhaoTest
         String Domain = domainObjectName.getText();
@@ -50,7 +63,9 @@ public class ServerGenerate {
         String domain = Domain.substring(0, 1).toLowerCase() + Domain.substring(1);
         // do_main = junhao-test
         String do_main = tableName.getText().replace("_", "-");
-
+        //表中文名
+        String tableNameCn = DbUtil.getTableComment(tableName.getText());
+        List<Field> fieldList = DbUtil.getColumnByTableName(tableName.getText());
         // 组装参数
         Map<String, Object> param = new HashMap<>();
         param.put("Domain", Domain);
