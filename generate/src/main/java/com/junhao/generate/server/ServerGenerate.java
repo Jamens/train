@@ -15,8 +15,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ServerGenerate {
-    static String servicePath = "member/src/main/java/com/junhao/member/service/";
+    static String servicePath = "member/src/main/java/com/junhao/member/";
     static String pomPath = "generate\\pom.xml";
+
     static {
         try {
             Files.createDirectories(Path.of(servicePath));
@@ -57,9 +58,21 @@ public class ServerGenerate {
         param.put("do_main", do_main);
         System.out.println("组装参数：" + param);
 
-        FreemarkerUtil.initConfig("service.ftl");
-        FreemarkerUtil.generator(servicePath + Domain + "Service.java", param);
+        gen(Domain, param, "service");
+        gen(Domain, param, "controller");
     }
+
+    private static void gen(String Domain, Map<String, Object> param, String targetPath) throws IOException, TemplateException {
+        FreemarkerUtil.initConfig(targetPath + ".ftl");
+        String toPath = servicePath + targetPath + "/";
+        Files.createDirectories(Path.of(toPath));
+        String Target = targetPath.substring(0, 1).toUpperCase() + targetPath.substring(1);
+        String fileName = toPath + Domain + Target + ".java";
+        // 打印生成的绝对路径，方便直接在 IDEA / 文件管理器中定位
+        System.out.println("生成文件：" + Path.of(fileName).toAbsolutePath().normalize());
+        FreemarkerUtil.generator(fileName, param);
+    }
+
     private static String getGeneratorPath() throws DocumentException {
         SAXReader saxReader = new SAXReader();
         Map<String, String> map = new HashMap<>();
