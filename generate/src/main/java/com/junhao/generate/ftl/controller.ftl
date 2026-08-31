@@ -1,13 +1,13 @@
-package com.junhao.member.controller;
+package com.junhao.${module}.controller;
 
 
 import com.junhao.common.context.LoginMemberContext;
 import com.junhao.common.resp.CommonResp;
 import com.junhao.common.resp.PageResp;
-import com.junhao.member.req.${Domain}QueryReq;
-import com.junhao.member.req.${Domain}SaveReq;
-import com.junhao.member.resp.${Domain}QueryResp;
-import com.junhao.member.service.${Domain}Service;
+import com.junhao.${module}.req.${Domain}QueryReq;
+import com.junhao.${module}.req.${Domain}SaveReq;
+import com.junhao.${module}.resp.${Domain}QueryResp;
+import com.junhao.${module}.service.${Domain}Service;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;

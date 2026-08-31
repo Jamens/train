@@ -1,4 +1,4 @@
-package com.junhao.member.req;
+package com.junhao.${module}.req;
 
 <#list typeSet as type>
 <#if type=='Date'>

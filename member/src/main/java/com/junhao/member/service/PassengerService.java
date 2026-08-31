@@ -5,7 +5,6 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.junhao.common.context.LoginMemberContext;
 import com.junhao.common.resp.PageResp;
 import com.junhao.common.util.SnowUtil;
 import com.junhao.member.domain.Passenger;
@@ -40,7 +39,6 @@ public class PassengerService {
         }
         if (ObjectUtil.isNull(reqId)) {
             passenger.setId(SnowUtil.getSnowflakeId());
-            passenger.setMemberId(LoginMemberContext.getId());
             passenger.setCreateTime(now.toLocalDateTime());
             passenger.setUpdateTime(now.toLocalDateTime());
             passengerMapper.insert(passenger);
@@ -60,9 +58,7 @@ public class PassengerService {
     public PageResp<PassengerQueryResp> queryList(PassengerQueryReq req) {
         PassengerExample passengerExample = new PassengerExample();
         PassengerExample.Criteria criteria = passengerExample.createCriteria();
-        if (ObjectUtil.isNotNull(req.getMemberId())) {
-            criteria.andMemberIdEqualTo(req.getMemberId());
-        }
+
 
         LOG.info("查询页码：{}", req.getPage());
         LOG.info("每页条数：{}", req.getSize());
