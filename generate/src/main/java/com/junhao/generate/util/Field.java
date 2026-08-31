@@ -15,7 +15,7 @@ public class Field {
     private String type; //字段类型 插入(8)
     private String javaType; //java类型 String
     private String comment; //字段注释 课程| Id
-    private String nullAble; //是否为空
+    private Boolean nullAble; //是否可为空（YES 可空 => true）
     private Integer length; //字符串长度
     private Boolean enums; //是否为枚举
     private String enumsConst; //枚举常量 COURSE_LEVEL

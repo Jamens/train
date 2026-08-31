@@ -1,6 +1,7 @@
 package com.junhao.generate.util;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,7 +90,7 @@ public class DbUtil {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, tableName);
             ResultSet rs = stmt.executeQuery(); // stmt 关闭时会自动关闭 rs
-            while(rs.next()) {
+            while (rs.next()) {
                 String columnName = rs.getString("Field");
                 String type = rs.getString("Type");
                 String comment = rs.getString("Comment");
@@ -106,7 +107,7 @@ public class DbUtil {
                 } else {
                     field.setNameCn(comment);
                 }
-                field.setNullAble(String.valueOf("YES".equals(nullAble)));
+                field.setNullAble("YES".equals(nullAble)); // 模板里用 #if !field.nullAble 判断，必须是布尔类型
                 if (type.toUpperCase().contains("varchar".toUpperCase())) {
                     String lengthStr = type.substring(type.indexOf("(") + 1, type.length() - 1);
                     field.setLength(Integer.valueOf(lengthStr));
@@ -129,7 +130,7 @@ public class DbUtil {
                 fieldList.add(field);
             }
         }
-        LOG.info("列信息：{}", fieldList);
+        LOG.info("列信息：{}", JSONUtil.toJsonPrettyStr(fieldList));
         return fieldList;
     }
 
@@ -139,12 +140,12 @@ public class DbUtil {
      * @param str 下划线风格的字符串
      * @return 小驼峰风格的字符串
      */
-    public static String lineToHump(String str){
+    public static String lineToHump(String str) {
         Pattern linePattern = Pattern.compile("_(\\w)");
         str = str.toLowerCase();
         Matcher matcher = linePattern.matcher(str);
         StringBuilder sb = new StringBuilder();
-        while(matcher.find()){
+        while (matcher.find()) {
             matcher.appendReplacement(sb, matcher.group(1).toUpperCase());
         }
         matcher.appendTail(sb);
@@ -157,7 +158,7 @@ public class DbUtil {
      * @param str 下划线风格的字符串
      * @return 大驼峰风格的字符串
      */
-    public static String lineToBigHump(String str){
+    public static String lineToBigHump(String str) {
         String s = lineToHump(str);
         return s.substring(0, 1).toUpperCase() + s.substring(1);
     }
