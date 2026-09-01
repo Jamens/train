@@ -25,7 +25,7 @@ const router = useRouter();
 import { UserOutlined, CoffeeOutlined } from "@ant-design/icons-vue";
 import { useRouter } from "vue-router";
 const selectedKeys2 = ref<string[]>(["/welcome"]);
-const openKeys = ref<string[]>(["sub1"]);
+const openKeys = ref<string[]>([]);
 watch(
   () => router.currentRoute.value.path,
   (path) => {

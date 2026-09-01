@@ -1,6 +1,8 @@
 <template>
   <a-space>
-    <a-button type="primary" @click="handleQuery({ page: 1, size: pagination.pageSize })"
+    <a-button
+      type="primary"
+      @click="handleQuery({ page: 1, size: pagination.pageSize })"
       >刷新</a-button
     >
     <a-button type="primary" @click="showModal">新增</a-button>
@@ -10,7 +12,6 @@
     :columns="columns"
     :pagination="pagination"
     @change="handleTableChange"
-    :loading="loading"
   >
     <template #bodyCell="{ column, record }">
       <template v-if="column.key === 'operation'">
@@ -55,18 +56,14 @@
         <a-input v-model:value="passenger.idCard" />
       </a-form-item>
       <a-form-item
-        label="旅客类型"
+        label="类型"
         name="type"
-        :rules="[{ required: true, message: '请选择旅客类型' }]"
+        :rules="[{ required: true, message: '请选择类型' }]"
       >
         <a-select v-model:value="passenger.type">
-          <a-select-option
-            v-for="item in PASSENGER_TYPE_ARRAY"
-            :key="item.key"
-            :value="item.key"
-          >
-            {{ item.value }}
-          </a-select-option>
+          <a-select-option value="1">成人</a-select-option>
+          <a-select-option value="2">儿童</a-select-option>
+          <a-select-option value="3">学生</a-select-option>
         </a-select>
       </a-form-item>
     </a-form>
@@ -75,16 +72,8 @@
 <script lang="ts" setup>
 import { notification } from "ant-design-vue";
 import { nextTick, onMounted, reactive, ref } from "vue";
-import {
-  deletePassenger,
-  savePassenger,
-  getPassengergetList,
-} from "@/api";
+import { deletePassenger, getPassengergetList, savePassenger } from "@/api";
 import type { PassengerQueryResp, PassengerVO } from "@/api/type";
-
-defineOptions({
-  name: "passenger-view",
-});
 
 // 乘车人表单初始状态（新增/重置时复用）
 const formRef = ref();
@@ -102,39 +91,29 @@ const visible = ref(false);
 const passenger = reactive({ ...PASSENGER_INITIAL });
 
 // 一行重置所有字段
-const resetPassenger = () =>
-  Object.assign(passenger, PASSENGER_INITIAL);
+const resetPassenger = () => Object.assign(passenger, PASSENGER_INITIAL);
 const passengers = ref<PassengerVO[]>([]);
 const pagination = reactive({
   total: 0,
   current: 1,
   pageSize: 10,
 });
-const loading = ref(false);
-
 const handleTableChange = (paginationVal: { current: any; pageSize: any }) => {
+  console.log("看看自带的分页参数都有啥：" + JSON.stringify(pagination));
   pagination.current = paginationVal.current || 1;
   pagination.pageSize = paginationVal.pageSize || 1;
+  // console.log("看看自带的分页参数都有啥：" + paginationVal);
   handleQuery({
     page: paginationVal.current,
     size: paginationVal.pageSize,
   });
 };
-
-// 旅客类型可选项，生成自后端枚举类 PassengerTypeEnum，枚举变更后需重新生成本文件
-const PASSENGER_TYPE_ARRAY: { key: string; value: string }[] = [
-  { key: "1", value: "成人" },
-  { key: "2", value: "儿童" },
-  { key: "3", value: "学生" },
-];
-// 旅客类型映射：存储值 -> 展示文案
-const PASSENGER_TYPE_MAP: Record<string, string> = PASSENGER_TYPE_ARRAY.reduce(
-  (map: Record<string, string>, item) => {
-    map[item.key] = item.value;
-    return map;
-  },
-  {} as Record<string, string>
-);
+// 乘车人类型映射：存储值 -> 展示文案
+const typeMap: Record<string, string> = {
+  "1": "成人",
+  "2": "儿童",
+  "3": "学生",
+};
 
 const columns = [
   {
@@ -148,11 +127,10 @@ const columns = [
     key: "idCard",
   },
   {
-    title: "旅客类型",
+    title: "类型",
     dataIndex: "type",
     key: "type",
-    customRender: ({ value }: { value: string }) =>
-      PASSENGER_TYPE_MAP[value] ?? value,
+    customRender: ({ value }: { value: string }) => typeMap[value] ?? value,
   },
   {
     title: "操作",
@@ -188,6 +166,23 @@ const handleDelete = (record: PassengerVO) => {
   });
 };
 
+const handleQuery = (param: { page: any; size: any }) => {
+  getPassengergetList(param).then((res: PassengerQueryResp) => {
+    if (res.success && res.content) {
+      passengers.value = res.content.list;
+      pagination.total = res.content.total;
+    } else {
+      notification.error({
+        description: res.message,
+        message: "",
+      });
+    }
+  });
+};
+onMounted(() => {
+  handleQuery({ page: 1, size: pagination.pageSize });
+});
+
 const handleOk = () => {
   formRef.value
     .validate()
@@ -213,26 +208,5 @@ const handleOk = () => {
       // 校验未通过，不关闭弹窗、不提交
     });
 };
-
-const handleQuery = (param: { page: any; size: any }) => {
-  loading.value = true;
-  getPassengergetList(param).then((res: PassengerQueryResp) => {
-    loading.value = false;
-    if (res.success && res.content) {
-      passengers.value = res.content.list;
-      pagination.current = param.page;
-      pagination.total = res.content.total;
-    } else {
-      notification.error({
-        description: res.message,
-        message: "",
-      });
-    }
-  });
-};
-
-onMounted(() => {
-  handleQuery({ page: 1, size: pagination.pageSize });
-});
 </script>
 <style></style>
