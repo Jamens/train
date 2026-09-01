@@ -62,10 +62,10 @@
         <a-select v-model:value="passenger.type">
           <a-select-option
             v-for="item in PASSENGER_TYPE_ARRAY"
-            :key="item.key"
-            :value="item.key"
+            :key="item.code"
+            :value="item.code"
           >
-            {{ item.value }}
+            {{ item.desc }}
           </a-select-option>
         </a-select>
       </a-form-item>
@@ -81,6 +81,7 @@ import {
   getPassengergetList,
 } from "@/api";
 import type { PassengerQueryResp, PassengerVO } from "@/api/type";
+import { PASSENGER_TYPE_ARRAY } from "@/assets/js/enums.ts";
 
 defineOptions({
   name: "passenger-view",
@@ -121,16 +122,10 @@ const handleTableChange = (paginationVal: { current: any; pageSize: any }) => {
   });
 };
 
-// 旅客类型可选项，生成自后端枚举类 PassengerTypeEnum，枚举变更后需重新生成本文件
-const PASSENGER_TYPE_ARRAY: { key: string; value: string }[] = [
-  { key: "1", value: "成人" },
-  { key: "2", value: "儿童" },
-  { key: "3", value: "学生" },
-];
-// 旅客类型映射：存储值 -> 展示文案
+// 旅客类型映射：存储值 -> 展示文案（选项本身来自 @/assets/js/enums，改枚举改那里即可）
 const PASSENGER_TYPE_MAP: Record<string, string> = PASSENGER_TYPE_ARRAY.reduce(
   (map: Record<string, string>, item) => {
-    map[item.key] = item.value;
+    map[item.code] = item.desc;
     return map;
   },
   {} as Record<string, string>

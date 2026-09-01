@@ -4,9 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.List;
-import java.util.Map;
-
 @Getter
 @Setter
 @ToString
@@ -21,7 +18,5 @@ public class Field {
     private Boolean nullAble; //是否可为空（YES 可空 => true）
     private Integer length; //字符串长度
     private Boolean enums; //是否为枚举
-    private String enumsConst; //枚举常量 COURSE_LEVEL
-    private String enumName; //枚举类名 PassengerTypeEnum
-    private List<Map<String, String>> enumList; //枚举可选项 [{key:"1", value:"成人"}]，取自Java枚举类的code/desc
+    private String enumsConst; //枚举常量 COURSE_LEVEL，对应前端 @/assets/js/enums 中的同名常量
 }

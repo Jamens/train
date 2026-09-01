@@ -55,13 +55,12 @@
       >
       <#if field.enums>
         <a-select v-model:value="${domain}.${field.nameHump}">
-      <#-- 模板里无法直接使用 window，需先在 script 中定义为顶层常量 -->
           <a-select-option
             v-for="item in ${field.enumsConst}_ARRAY"
-            :key="item.key"
-            :value="item.key"
+            :key="item.code"
+            :value="item.code"
           >
-            {{ item.value }}
+            {{ item.desc }}
           </a-select-option>
         </a-select>
       <#elseif field.javaType=='Date'>
@@ -108,6 +107,17 @@ import {
   get${Domain}getList,
 } from "@/api";
 import type { ${Domain}QueryResp, ${Domain}VO } from "@/api/type";
+<#-- 收集本表用到的枚举常量，统一从 enums.ts 导入；无枚举字段时不生成 import（避免 noUnusedLocals 报错） -->
+<#assign enumFields = []>
+<#list fieldList as f>
+<#if f.enums>
+<#assign enumFields = enumFields + [f]>
+</#if>
+</#list>
+<#if enumFields?size gt 0>
+<#-- 显式写 .ts 后缀：同目录若残留同名 .js，无后缀的写法会被 Vite 优先解析到 .js，导致 export 找不到 -->
+import { <#list enumFields as f>${f.enumsConst}_ARRAY<#sep>, </#sep></#list> } from "@/assets/js/enums.ts";
+</#if>
 
 defineOptions({
   name: "${do_main}-view",
@@ -146,16 +156,10 @@ const handleTableChange = (paginationVal: { current: any; pageSize: any }) => {
 
 <#list fieldList as field>
 <#if field.enums>
-// ${field.nameCn}可选项，生成自后端枚举类 ${field.enumName!}，枚举变更后需重新生成本文件
-const ${field.enumsConst}_ARRAY: { key: string; value: string }[] = [
-<#list field.enumList! as item>
-  { key: "${item.key}", value: "${item.value}" },
-</#list>
-];
-// ${field.nameCn}映射：存储值 -> 展示文案
+// ${field.nameCn}映射：存储值 -> 展示文案（选项本身来自 @/assets/js/enums，改枚举改那里即可）
 const ${field.enumsConst}_MAP: Record<string, string> = ${field.enumsConst}_ARRAY.reduce(
   (map: Record<string, string>, item) => {
-    map[item.key] = item.value;
+    map[item.code] = item.desc;
     return map;
   },
   {} as Record<string, string>

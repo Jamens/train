@@ -90,6 +90,9 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                    <!-- 加 classifier：可执行 fat jar 变成 xxx-exec.jar，
+                         原始的 xxx.jar 保持为普通 jar，才能被其它模块（如 generate）作为依赖引用 -->
+                    <classifier>exec</classifier>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>

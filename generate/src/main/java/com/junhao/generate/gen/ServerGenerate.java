@@ -1,8 +1,7 @@
-package com.junhao.generate.server;
+package com.junhao.generate.gen;
 
 
 import com.junhao.generate.util.DbUtil;
-import com.junhao.generate.util.EnumUtil;
 import com.junhao.generate.util.Field;
 import com.junhao.generate.util.FreemarkerUtil;
 import freemarker.template.TemplateException;
@@ -67,8 +66,6 @@ public class ServerGenerate {
         //表中文名
         String tableNameCn = DbUtil.getTableComment(tableName.getText());
         List<Field> fieldList = DbUtil.getColumnByTableName(tableName.getText());
-        // 读取Java枚举类的真实code/desc，供前端生成下拉选项（不再依赖window注入）
-        fillEnumList(fieldList, module);
         Set<String> typeSet = getJavaTypes(fieldList);
         // 组装参数
         Map<String, Object> param = new HashMap<>();
@@ -115,23 +112,6 @@ public class ServerGenerate {
         String fileName = vuePath + Domain + ".vue";
         System.out.println("生成文件：" + Path.of(fileName).toAbsolutePath().normalize());
         FreemarkerUtil.generator(fileName, param);
-    }
-
-    /**
-     * 为枚举字段填充可选项列表
-     *
-     * @param fieldList 字段列表
-     * @param module    模块名，用于定位枚举类文件
-     */
-    private static void fillEnumList(List<Field> fieldList, String module) {
-        for (Field field : fieldList) {
-            if (!Boolean.TRUE.equals(field.getEnums())) {
-                continue;
-            }
-            String enumName = EnumUtil.getEnumName(field.getComment());
-            field.setEnumName(enumName);
-            field.setEnumList(EnumUtil.parseEnum(module, enumName));
-        }
     }
 
     private static String getGeneratorPath() throws DocumentException {
